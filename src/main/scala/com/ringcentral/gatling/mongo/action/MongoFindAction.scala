@@ -35,7 +35,7 @@ class MongoFindAction(command: MongoFindCommand, database: DefaultDB, val statsE
       sort <- string2JsObject(resolvedSort)
     } yield {
       val sent = nowMillis
-      database.collection[JSONCollection](collectionName).find(filter).options(QueryOpts().batchSize(command.limit)).sort(sort).hint(hint)
+      database.collection[JSONCollection](collectionName).find(filter).options(QueryOpts().batchSize(1000)).sort(sort).hint(hint)
         .cursor[JsObject](ReadPreference.primary).jsArray(command.limit).onComplete {
         case Success(result) => processResult(session, sent, nowMillis, command.checks, MongoStringResponse(result.toString()), next, commandName)
         case Failure(err) => executeNext(session, sent, nowMillis, KO, next, commandName, Some(err.getMessage))
